@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Community
 from .serializers import CommunitySerializer
 
-class CommunityListCreateView(generics.ListCreateAPIView):
+class CommunityList(generics.ListCreateAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
     permission_classes = [IsAuthenticated]
@@ -11,7 +11,7 @@ class CommunityListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
-class CommunityDetailView(generics.RetrieveUpdateDestroyAPIView):
+class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
     permission_classes = [IsAuthenticated]
