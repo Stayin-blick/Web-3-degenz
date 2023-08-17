@@ -20,7 +20,7 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
 
-@action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'])
     def invite_user(self, request, pk=None):
         community = self.get_object()
         invitee_username = request.data.get('invitee_username')
