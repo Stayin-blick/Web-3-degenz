@@ -11,6 +11,7 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
+    community = serializers.SerializerMethodField()
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -40,6 +41,13 @@ class PostSerializer(serializers.ModelSerializer):
             return like.id if like else None
         return None
 
+    def get_community(self, obj):
+        if obj.community:
+            return {
+                'id': obj.community.id,
+                'name': obj.community.name,
+            }
+        return None
 
     class Meta:
         model = Post
