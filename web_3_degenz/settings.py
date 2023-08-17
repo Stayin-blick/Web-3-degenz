@@ -40,7 +40,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = 'DEV' in os.environ
 
 ALLOWED_HOSTS = [
-    '8000-stayinblick-web3degenz-w7laasnfzb4.ws-eu103.gitpod.io',
     '8000-stayinblick-web3degenz-w7laasnfzb4.ws-eu104.gitpod.io',
     os.environ.get('ALLOWED_HOST'),
     'localhost',
