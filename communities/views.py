@@ -34,3 +34,29 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         
         invitation = Invitation.objects.create(inviter=request.user, community=community, invitee=invitee)
         return Response({'detail': 'Invitation sent successfully.'}, status=201)
+
+    @action(detail=True, methods=['put'])
+    def edit_community(self, request, pk=None):
+        community = self.get_object()
+
+        if community.owner != self.request.user:
+            return Response({'detail': 'You are not the owner of this community.'}, status=403)
+
+        name = request.data.get('name')
+        if name:
+            community.name = name
+
+        moderators_to_add = request.data.get('moderators_to_add', [])
+        moderators_to_remove = request.data.get('moderators_to_remove', [])
+
+        for moderator_id in moderators_to_add:
+            moderator = User.objects.get(id=moderator_id)
+            community.moderators.add(moderator)
+
+        for moderator_id in moderators_to_remove:
+            moderator = User.objects.get(id=moderator_id)
+            community.moderators.remove(moderator)
+
+        community.save()
+
+        return Response({'detail': 'Community details updated successfully.'}, status=200)
