@@ -33,6 +33,12 @@ class InvitationViewSet(ModelViewSet):
             if community.members.filter(pk=invitee.pk).exists():
                 return Response({'detail': 'User is already a member of this community.'}, status=status.HTTP_400_BAD_REQUEST)
             
+            if not community.members.filter(pk=request.user.pk).exists():
+                return Response({'detail': 'You are not a member of this community.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            if not request.user.following.filter(pk=invitee.pk).exists() or not invitee.followers.filter(pk=request.user.pk).exists():
+                return Response({'detail': 'Both users need to be following each other to send an invite.'}, status=status.HTTP_403_FORBIDDEN)
+            
             if Invitation.objects.filter(community=community, invitee=invitee).exists():
                 return Response({'detail': 'An invitation to this user for this community already exists.'}, status=status.HTTP_400_BAD_REQUEST)
             
