@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions
-from drf_api.permissions import IsOwnerOrReadOnly
+from web_3_degenz.permissions import IsOwnerOrReadOnly
 from .models import Follower
 from .serializers import FollowerSerializer
 

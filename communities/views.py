@@ -49,14 +49,17 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         moderators_to_add = request.data.get('moderators_to_add', [])
         moderators_to_remove = request.data.get('moderators_to_remove', [])
 
-        for moderator_id in moderators_to_add:
-            moderator = User.objects.get(id=moderator_id)
-            community.moderators.add(moderator)
+        moderators_to_add_ids = [int(moderator_id) for moderator_id in moderators_to_add]
+        moderators_to_add_users = User.objects.filter(id__in=moderators_to_add_ids)
+        community.moderators.add(*moderators_to_add_users)
 
-        for moderator_id in moderators_to_remove:
-            moderator = User.objects.get(id=moderator_id)
-            community.moderators.remove(moderator)
+        moderators_to_remove_ids = [int(moderator_id) for moderator_id in moderators_to_remove]
+        moderators_to_remove_users = User.objects.filter(id__in=moderators_to_remove_ids)
+        community.moderators.remove(*moderators_to_remove_users)
 
         community.save()
 
-        return Response({'detail': 'Community details updated successfully.'}, status=200)
+        active_moderators = community.moderators.all()
+
+        serializer = CommunitySerializer(community, context={'request': request})
+        return Response({'detail': 'Community details updated successfully.', 'active_moderators': active_moderators}, status=200)

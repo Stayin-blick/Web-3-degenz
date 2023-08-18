@@ -3,11 +3,7 @@ from .models import Community
 
 class CommunitySerializer(serializers.ModelSerializer):
 
-    active_moderators = serializers.SerializerMethodField()
-
-    def get_active_moderators(self, obj):
-        moderators = obj.moderators.all()
-        return [{'username': moderator.username} for moderator in moderators]
+    active_moderators = serializers.StringRelatedField(many=True, source='moderators')
 
     class Meta:
         model = Community
