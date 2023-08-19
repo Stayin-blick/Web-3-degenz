@@ -7,6 +7,7 @@ class Invitation(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invitations_received')
     created_at = models.DateTimeField(auto_now_add=True)
+    accepted = models.BooleanField(default=False) 
 
     class Meta:
         unique_together = ['inviter', 'community', 'invitee']

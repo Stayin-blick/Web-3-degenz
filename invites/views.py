@@ -29,19 +29,13 @@ class InvitationViewSet(ModelViewSet):
             invitee_username = request.data.get('invitee_username')
             community = Community.objects.get(id=community_id)
             invitee = User.objects.get(username=invitee_username)
-            
-            if community.members.filter(pk=invitee.pk).exists():
-                return Response({'detail': 'User is already a member of this community.'}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             if not community.members.filter(pk=request.user.pk).exists():
-                return Response({'detail': 'You are not a member of this community.'}, status=status.HTTP_403_FORBIDDEN)
-            
-            if not request.user.following.filter(pk=invitee.pk).exists() or not invitee.followers.filter(pk=request.user.pk).exists():
-                return Response({'detail': 'Both users need to be following each other to send an invite.'}, status=status.HTTP_403_FORBIDDEN)
-            
+                return Response({'detail': 'You are not a member of this community.'}, status=status.HTTP_400_BAD_REQUEST)
+
             if Invitation.objects.filter(community=community, invitee=invitee).exists():
                 return Response({'detail': 'An invitation to this user for this community already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             Invitation.objects.create(inviter=request.user, community=community, invitee=invitee)
             return Response({'detail': 'Invitation sent successfully.'}, status=status.HTTP_201_CREATED)
         except (Community.DoesNotExist, User.DoesNotExist):
@@ -52,7 +46,7 @@ class InvitationViewSet(ModelViewSet):
         try:
             invitation = self.get_object()
             if invitation.invitee != request.user or invitation.accepted:
-                return Response({'detail': 'Invitation not found or already accepted.'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'detail': 'Invitation not found or already accepted.'}, status=status.HTTP_400_BAD_REQUEST)
             
             community = invitation.community
             community.members.add(request.user)

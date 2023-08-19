@@ -1,13 +1,23 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Community
 
-class CommunitySerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username']
 
-    active_moderators = serializers.StringRelatedField(many=True, source='moderators')
+class CommunitySerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    members_count = serializers.SerializerMethodField()
+    active_moderators = UserSerializer(many=True, read_only=True, source='moderators')
+
+    def get_members_count(self, obj):
+        return obj.members.count()
 
     class Meta:
         model = Community
         fields = [
-            'id', 'name', 'owner', 'moderators',
-            'created_at', 'privacy', 'active_moderators'
+            'id', 'name', 'owner', 'members_count',
+            'created_at', 'privacy', 'active_moderators', 'members'
         ]
