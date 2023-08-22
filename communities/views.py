@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Community
 from .serializers import CommunitySerializer
-from web_3_degenz.permissions import IsOwnerOrReadOnly
+from web_3_degenz.permissions import IsOwnerOrReadOnly, IsCommunityMember
 from django.contrib.auth.models import User  
 from posts.models import Post
 from posts.serializers import PostSerializer
