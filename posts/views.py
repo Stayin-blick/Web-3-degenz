@@ -4,6 +4,7 @@ from web_3_degenz.permissions import IsOwnerOrReadOnly
 from .models import Post
 from .serializers import PostSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from communities.models import Community
 
 
 class PostList(generics.ListCreateAPIView):
@@ -35,7 +36,7 @@ class PostList(generics.ListCreateAPIView):
     ]
 
     def perform_create(self, serializer):
-        community_id = self.request.data.get('community')  
+        community_id = self.request.data.get('community')
         if community_id:
             community = Community.objects.get(id=community_id)
             serializer.save(owner=self.request.user, community=community)

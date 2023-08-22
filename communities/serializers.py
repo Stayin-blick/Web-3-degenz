@@ -22,5 +22,5 @@ class CommunitySerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'owner', 'members_count',
             'created_at', 'privacy', 'active_moderators',
-            'members', 'posts'
+            'posts'
         ]

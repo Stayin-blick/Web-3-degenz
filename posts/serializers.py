@@ -12,6 +12,8 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
     community = serializers.SerializerMethodField()
+    community_name = serializers.ReadOnlyField(source='community.name')
+
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -55,5 +57,5 @@ class PostSerializer(serializers.ModelSerializer):
             'id', 'owner', 'is_owner', 'profile_id',
             'profile_image', 'created_at', 'updated_at',
             'title', 'content', 'image', 'like_id',
-            'likes_count', 'comments_count', 'community'
+            'likes_count', 'comments_count', 'community', 'community_name'
         ]

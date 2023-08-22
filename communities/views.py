@@ -1,13 +1,15 @@
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Community
 from .serializers import CommunitySerializer
 from web_3_degenz.permissions import IsOwnerOrReadOnly, IsCommunityMember
-from django.contrib.auth.models import User  
+from django.contrib.auth.models import User
 from posts.models import Post
 from posts.serializers import PostSerializer
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
+
 
 class CommunityList(generics.ListCreateAPIView):
     queryset = Community.objects.all()
@@ -16,6 +18,7 @@ class CommunityList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
 
 class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Community.objects.all()
@@ -27,14 +30,15 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         if instance.owner != request.user:
             return Response({'detail': 'You are not the owner of this community.'}, status=status.HTTP_403_FORBIDDEN)
-        
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
         return Response(serializer.data)
 
-    def update_moderators(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def update_moderators(self, request, pk=None):
         community = self.get_object()
 
         if community.owner != self.request.user:
@@ -59,7 +63,8 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = CommunitySerializer(community, context={'request': request})
         return Response({'detail': 'Moderators updated successfully.', 'active_moderators': active_moderators}, status=status.HTTP_200_OK)
 
-    def update_members(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def update_members(self, request, pk=None):
         community = self.get_object()
 
         if community.owner != self.request.user:
@@ -78,7 +83,8 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = CommunitySerializer(community, context={'request': request})
         return Response({'detail': 'Members removed successfully.'}, status=status.HTTP_200_OK)
 
-    def add_moderators(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def add_moderators(self, request, pk=None):
         community = self.get_object()
 
         if community.owner != self.request.user:
@@ -97,7 +103,8 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = CommunitySerializer(community, context={'request': request})
         return Response({'detail': 'Moderators added successfully.'}, status=status.HTTP_200_OK)
 
-    def remove_moderators(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def remove_moderators(self, request, pk=None):
         community = self.get_object()
 
         if community.owner != self.request.user:
@@ -116,7 +123,8 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = CommunitySerializer(community, context={'request': request})
         return Response({'detail': 'Moderators removed successfully.'}, status=status.HTTP_200_OK)
 
-    def remove_post(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def remove_post(self, request, pk=None):
         community = self.get_object()
 
         if community.owner != self.request.user and not community.moderators.filter(pk=self.request.user.pk).exists():
@@ -138,7 +146,8 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
         else:
             return Response({'detail': 'Invalid post ID provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def remove_member(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def remove_member(self, request, pk=None):
         community = self.get_object()
 
         if community.owner != self.request.user and not community.moderators.filter(pk=self.request.user.pk).exists():
@@ -156,27 +165,6 @@ class CommunityDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return Response({'detail': 'Members removed successfully.'}, status=status.HTTP_200_OK)
 
-    def list_posts(self, request, *args, **kwargs):
-        community = self.get_object()
-
-        if community.privacy == 'public':
-            # Public community behavior
-            posts = Post.objects.filter(community=community)
-        elif community.privacy == 'private':
-            # Private community behavior
-            if self.request.user in community.members.all():
-                posts = Post.objects.filter(community=community)
-            else:
-                posts = []
-        else:  # Hidden community
-            if self.request.user in community.members.all():
-                posts = Post.objects.filter(community=community)
-            else:
-                posts = []
-
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
-
 
 class CommunityPostList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
@@ -184,9 +172,14 @@ class CommunityPostList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         community_id = self.kwargs.get('pk')
-        return Post.objects.filter(community_id=community_id)
+        community = get_object_or_404(Community, id=community_id)
+
+        if community.privacy == 'public' or self.request.user in community.members.all():
+            return Post.objects.filter(community=community)
+        else:
+            return Post.objects.none()
 
     def perform_create(self, serializer):
         community_id = self.kwargs.get('pk')
         community = get_object_or_404(Community, id=community_id)
-        serializer.save(community=community, owner=self.request.user)
+        serializer.save(owner=self.request.user, community=community)
