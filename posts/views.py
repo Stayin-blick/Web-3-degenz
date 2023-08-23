@@ -36,12 +36,7 @@ class PostList(generics.ListCreateAPIView):
     ]
 
     def perform_create(self, serializer):
-        community_id = self.request.data.get('community')
-        if community_id:
-            community = Community.objects.get(id=community_id)
-            serializer.save(owner=self.request.user, community=community)
-        else:
-            serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user)
 
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):

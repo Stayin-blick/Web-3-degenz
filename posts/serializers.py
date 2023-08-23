@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from posts.models import Post
 from likes.models import Like
-
+from communities.models import Community
+from django.core.exceptions import ObjectDoesNotExist
 
 class PostSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -11,9 +12,6 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
-    community = serializers.SerializerMethodField()
-    community_name = serializers.ReadOnlyField(source='community.name')
-
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -51,11 +49,24 @@ class PostSerializer(serializers.ModelSerializer):
             }
         return None
 
+    def create(self, validated_data):
+        request = self.context['request']
+        community_id = request.data.get('community_id')
+        print(f"Received community_id: {community_id}")
+
+        try:
+            community = Community.objects.get(id=community_id)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError('Invalid community ID')
+        
+        post = Post.objects.create(owner=request.user, community=community, **validated_data)
+        return post
+    
     class Meta:
         model = Post
         fields = [
             'id', 'owner', 'is_owner', 'profile_id',
             'profile_image', 'created_at', 'updated_at',
             'title', 'content', 'image', 'like_id',
-            'likes_count', 'comments_count', 'community', 'community_name'
+            'likes_count', 'comments_count', 'community'
         ]

@@ -8,8 +8,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.owner == request.user
 
 
-class IsCommunityMember(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        community = view.get_object()
-        return request.user in community.members.all()
+class IsCommunityOwnerOrModerator(permissions.BasePermission):
+    
+    def has_object_permission(self, request, view, obj):
+        return obj.owner == request.user or request.user in obj.moderators.all()
