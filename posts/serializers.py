@@ -12,6 +12,7 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
+    community = serializers.SerializerMethodField()
 
     def get_is_owner(self, obj):
         request = self.context['request']
