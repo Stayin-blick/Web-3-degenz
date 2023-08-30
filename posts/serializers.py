@@ -12,7 +12,14 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
-    community = serializers.SerializerMethodField()
+    community = serializers.PrimaryKeyRelatedField(queryset=Community.objects.all(), write_only=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'context' in kwargs:
+            user = kwargs['context']['request'].user
+            if user.is_authenticated:
+                self.fields['community'].queryset = user.communities_joined.all()
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -41,27 +48,6 @@ class PostSerializer(serializers.ModelSerializer):
             ).first()
             return like.id if like else None
         return None
-
-    def get_community(self, obj):
-        if obj.community:
-            return {
-                'id': obj.community.id,
-                'name': obj.community.name,
-            }
-        return None
-
-    def create(self, validated_data):
-        request = self.context['request']
-        community_id = request.data.get('community_id')
-        print(f"Received community_id: {community_id}")
-
-        try:
-            community = Community.objects.get(id=community_id)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError('Invalid community ID')
-        
-        post = Post.objects.create(owner=request.user, community=community, **validated_data)
-        return post
     
     class Meta:
         model = Post
@@ -69,5 +55,5 @@ class PostSerializer(serializers.ModelSerializer):
             'id', 'owner', 'is_owner', 'profile_id',
             'profile_image', 'created_at', 'updated_at',
             'title', 'content', 'image', 'like_id',
-            'likes_count', 'comments_count', 'community'
+            'likes_count', 'comments_count','community'
         ]
