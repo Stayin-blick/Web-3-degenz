@@ -1,59 +1,51 @@
-from rest_framework import status
-from rest_framework.views import APIView
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
-from rest_framework.viewsets import ModelViewSet
-from django.contrib.auth.models import User
 from .models import Invitation
 from communities.models import Community
 from .serializers import InvitationSerializer
+from web_3_degenz.permissions import IsCommunityMember
 
-class UserCommunityView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user_communities = request.user.joined_communities.all()
-        community_names = [community.name for community in user_communities]
-        return Response({'user_communities': community_names}, status=status.HTTP_200_OK)
-
-class InvitationViewSet(ModelViewSet):
-    queryset = Invitation.objects.all()
+class InvitationListView(generics.ListAPIView):
     serializer_class = InvitationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=['POST'])
-    def send_invite(self, request):
-        try:
-            community_id = request.data.get('community_id')
-            invitee_username = request.data.get('invitee_username')
-            community = Community.objects.get(id=community_id)
-            invitee = User.objects.get(username=invitee_username)
+    def get_queryset(self):
+        user = self.request.user
+        return Invitation.objects.filter(invitee=user, accepted=False)
 
-            if not community.members.filter(pk=request.user.pk).exists():
-                return Response({'detail': 'You are not a member of this community.'}, status=status.HTTP_400_BAD_REQUEST)
+class InvitationCreateView(generics.CreateAPIView):
+    serializer_class = InvitationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsCommunityMember]
 
-            if Invitation.objects.filter(community=community, invitee=invitee).exists():
-                return Response({'detail': 'An invitation to this user for this community already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        return Community.objects.filter(members=self.request.user)
 
-            Invitation.objects.create(inviter=request.user, community=community, invitee=invitee)
-            return Response({'detail': 'Invitation sent successfully.'}, status=status.HTTP_201_CREATED)
-        except (Community.DoesNotExist, User.DoesNotExist):
-            return Response({'detail': 'Invalid community or invitee username.'}, status=status.HTTP_400_BAD_REQUEST)
+    def perform_create(self, serializer):
+        inviter = self.request.user
+        community = serializer.validated_data['community']
+        invitee_username = serializer.validated_data['invitee_username']
 
-    @action(detail=True, methods=['POST'])
-    def accept_invite(self, request, pk=None):
-        try:
-            invitation = self.get_object()
-            if invitation.invitee != request.user or invitation.accepted:
-                return Response({'detail': 'Invitation not found or already accepted.'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            community = invitation.community
-            community.members.add(request.user)
-            
-            invitation.accepted = True
-            invitation.save()
-            
-            return Response({'detail': 'Invitation accepted and user added to community.'}, status=status.HTTP_200_OK)
-        except Invitation.DoesNotExist:
-            return Response({'detail': 'Invitation not found or already accepted.'}, status=status.HTTP_404_NOT_FOUND)
+        # Check if the invitee is already a member of the community
+        if community.members.filter(username=invitee_username).exists():
+            raise serializers.ValidationError("The user is already a member of the community.")
+
+        # Check if an invitation from the same inviter to the same community for the same invitee exists
+        if Invitation.objects.filter(inviter=inviter, community=community, invitee__username=invitee_username).exists():
+            raise serializers.ValidationError("You have already invited this user to the community.")
+
+        serializer.save(inviter=inviter)
+
+class InvitationAcceptView(generics.UpdateAPIView):
+    serializer_class = InvitationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Invitation.objects.filter(invitee=user, accepted=False)
+
+    def perform_update(self, serializer):
+        invitation = serializer.instance
+        community = invitation.community
+        community.members.add(invitation.invitee)
+        invitation.accepted = True
+        invitation.save()

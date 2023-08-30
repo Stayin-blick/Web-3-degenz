@@ -1,11 +1,8 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import UserCommunityView, InvitationViewSet
-
-router = DefaultRouter()
-router.register(r'invitations', InvitationViewSet, basename='invitation')
+from django.urls import path
+from invites import views
 
 urlpatterns = [
-    path('get_user_communities/', UserCommunityView.as_view(), name='get_user_communities'),
-    path('', include(router.urls)),
+    path('invitations/', views.InvitationListView.as_view(), name='invitation-received-list'),
+    path('invitations/create/', views.InvitationCreateView.as_view(), name='invitation-create'),
+    path('invitations/<int:pk>/accept/', views.InvitationAcceptView.as_view(), name='invitation-accept'),
 ]

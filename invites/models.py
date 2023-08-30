@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from communities.models import Community
 
 class Invitation(models.Model):
+    id = models.AutoField(primary_key=True)
     inviter = models.ForeignKey(User, on_delete=models.CASCADE)
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invitations_received')
