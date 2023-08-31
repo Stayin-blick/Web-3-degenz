@@ -5,9 +5,17 @@ from .serializers import CommunitySerializer
 from web_3_degenz.permissions import IsCommunityOwnerOrModerator
 
 class CommunityListCreateView(generics.ListCreateAPIView):
-    queryset = Community.objects.all()
     serializer_class = CommunitySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Community.objects.filter(
+            models.Q(privacy='public') |
+            models.Q(privacy='private') |
+            models.Q(members=user)
+        ).distinct()
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
