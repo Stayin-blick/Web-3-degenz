@@ -1,5 +1,7 @@
 import React from 'react';
-// import { Container, Row, Col } from 'react-bootstrap';
+// import styles from '../styles/Communities.module.css'
+import PopularCommunities from './PopularCommunities';
+import CommunitiesList from './CommunitiesList';
 
 const CommunitiesHome = () => {
   return (
@@ -8,15 +10,17 @@ const CommunitiesHome = () => {
   <div className="row">
     <div className="col-md-4 d-none d-md-block">
       {/* Popular Communities Component */}
-      <h4>Communities Home Page</h4>
+      <h4>Popular Communities</h4>
+      < PopularCommunities />
     </div>
     <div className="col-md-4">
       {/* User's Joined Communities Component */}
-      <h4>Communities Home Page</h4>
+      <h4>Community List</h4>
+      < CommunitiesList />
     </div>
     <div className="col-md-4 d-none d-md-block">
       {/* Trending Communities Component */}
-      <h4>Communities Home Page</h4>
+      <h4>Trending Communities</h4>
     </div>
   </div>
 </div>
