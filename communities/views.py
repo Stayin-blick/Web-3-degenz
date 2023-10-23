@@ -59,3 +59,4 @@ class CommunityDetailView(generics.RetrieveUpdateDestroyAPIView):
         }
 
         return Response(response_data)
+
