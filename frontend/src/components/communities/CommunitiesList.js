@@ -8,8 +8,9 @@ const CommunitiesList = () => {
   useEffect(() => {
     // Fetch the list of communities
     axios.get('/communities/').then((response) => {
+      console.log(response.data);
       setCommunities(response.data.results);
-    }, []);
+    });
   }, []);
 
   return (

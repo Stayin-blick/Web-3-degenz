@@ -16,7 +16,6 @@ const CommunitiesHome = () => {
     </div>
     <div className="col-md-4">
       {/* User's Joined Communities Component */}
-      <h4>Community List</h4>
       < CommunitiesList />
     </div>
     <div className="col-md-4 d-none d-md-block">

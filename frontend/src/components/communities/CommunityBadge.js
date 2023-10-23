@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Media, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 
@@ -11,9 +11,9 @@ const CommunityBadge = ({ community }) => {
         {community.image}
       </Link>
         <a href={`/communities/${community.id}`}>{community.name}</a>
-        {community.members}
-        {community.privacy}
-        {community.last_visited}
+        members:{community.members.length}
+        privacy:{community.privacy}
+        last visted:{community.last_visited}
       </Card.Body>
     </Card>
   );
