@@ -18,6 +18,7 @@ class Community(models.Model):
     moderators = models.ManyToManyField(User, related_name='communities_moderated', blank=True)
     content = models.TextField(blank=True)
     image = models.ImageField(upload_to='images/', default='../default_post_qjpefy', blank=True)
+    last_visited = models.DateTimeField(null=True, blank=True)
     privacy = models.CharField(max_length=20, choices=PRIVACY_CHOICES, default='public')
 
     def __str__(self):

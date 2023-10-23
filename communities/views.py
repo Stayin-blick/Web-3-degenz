@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Community
@@ -11,10 +12,10 @@ class CommunityListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
         queryset = Community.objects.filter(
-            models.Q(privacy='public') |
-            models.Q(privacy='private') |
-            models.Q(members=user)
-        ).distinct()
+            Q(privacy='public') |
+            Q(privacy='private') |
+            Q(members=user)
+        ).order_by('-last_visited')
         return queryset
 
     def perform_create(self, serializer):
