@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import CommunityBadge from './CommunityBadge';
 
 const CommunitiesList = () => {
   const [communities, setCommunities] = useState([]);
@@ -7,20 +8,18 @@ const CommunitiesList = () => {
   useEffect(() => {
     // Fetch the list of communities
     axios.get('/communities/').then((response) => {
-      setCommunities(response.data);
-    });
+      setCommunities(response.data.results);
+    }, []);
   }, []);
 
   return (
     <div>
       <h1>Communities</h1>
-      <ul>
+      <div>
         {communities.map((community) => (
-          <li key={community.id}>
-            <a href={`/community/${community.id}`}>{community.name}</a>
-          </li>
+          <CommunityBadge key={community.id} community={community} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
