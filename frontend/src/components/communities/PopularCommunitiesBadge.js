@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import styles from '../../styles/Communities.module.css';
 
 const PopularCommunityBadge = ({ community }) => {
-  // console.log(community);
 
   return (
     <Card className={styles.customCardSpacing}>
@@ -25,9 +24,9 @@ const PopularCommunityBadge = ({ community }) => {
                     {community.name}
                   </Link>
                 </Card.Title>
-                {/* <Card.Subtitle className={styles.customSubtitle}>
+                <Card.Subtitle className={styles.customSubtitle}>
                   members: {community.members.length}
-                </Card.Subtitle> */}
+                </Card.Subtitle>
                 <Card.Subtitle className={styles.customSubtitle}>
                   privacy: {community.privacy}
                 </Card.Subtitle>

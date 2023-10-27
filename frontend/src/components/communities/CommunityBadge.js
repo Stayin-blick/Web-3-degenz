@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import styles from '../../styles/Communities.module.css';
 
 const CommunityBadge = ({ community }) => {
-  console.log(community);
 
   return (
     <Card className={styles.customCardSpacing}>

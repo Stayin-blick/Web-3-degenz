@@ -15,7 +15,6 @@ const CommunitiesList = () => {
 
   return (
     <div>
-      <h1>Communities</h1>
       <div>
         {communities.map((community) => (
           <CommunityBadge key={community.id} community={community} />

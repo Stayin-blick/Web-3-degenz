@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import PopularCommunityBadge from './CommunityBadge';
+import PopularCommunityBadge from './PopularCommunitiesBadge';
 
 const PopularCommunitiesList = () => {
   const [communities, setCommunities] = useState([]);
