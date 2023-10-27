@@ -15,6 +15,7 @@ import UsernameForm from "./pages/profiles/UsernameForm";
 import UserPasswordForm from "./pages/profiles/UserPasswordForm";
 import ProfileEditForm from "./pages/profiles/ProfileEditForm";
 import CommunitiesHomePage from "./components/communities/CommunitiesHomePage";
+import CommunityPage from "./components/communities/CommunityPage"
 
 function App() {
   const currentUser = useCurrentUser();
@@ -74,6 +75,7 @@ function App() {
             render={() => <ProfileEditForm />}
           />
           <Route exact path="/communities" render={() => <CommunitiesHomePage />} />
+          <Route path="/communities/:id/homepage" render={() => <CommunityPage />} />
           <Route render={() => <p>Page not found</p>} />
         </Switch>
       </Container>

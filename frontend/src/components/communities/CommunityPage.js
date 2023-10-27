@@ -3,12 +3,18 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const CommunityHomepage = ({ community }) => {
+  // console.log(community);
   return (
     <Container>
       <Row>
         {/* Left Column - Community Info (Hidden on sm screens) */}
         <Col md={3} className="d-none d-md-block">
           {/* Display community information, founder, moderators, etc. */}
+          <h1>community info</h1>
+          {/* {community.name}
+          {community.name}
+          {community.members.length}
+          {community.privacy} */}
         </Col>
 
         {/* Middle Column - Community Posts */}
