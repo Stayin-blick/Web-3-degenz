@@ -11,3 +11,11 @@
 .customCardSpacing {
     margin: 1rem 0;
 }
+
+/* .invite_Card {
+    padding: 35px;
+} */
+
+.invite_form {
+    backdrop-filter: blur(0px); background-color: rgba(255, 255, 255, 1); border-radius: 35px; box-shadow: -35px 35px 68px 0px rgba(55, 140, 255, 0.5), inset 10px -10px 16px 0px rgba(55, 140, 255, 0.6), inset 0px 11px 28px 0px rgb(255, 255, 255);
+}

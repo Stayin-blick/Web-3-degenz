@@ -1,8 +1,10 @@
+from django.utils import timezone
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Community, CommunityPost
 from .serializers import CommunitySerializer, CommunityPostSerializer
-from web_3_degenz.permissions import IsCommunityOwnerOrModerator
+from web_3_degenz.permissions import IsCommunityOwnerOrModerator, IsCommunityMember
+import humanize
 
 class CommunityListCreateView(generics.ListCreateAPIView):
     serializer_class = CommunitySerializer
@@ -10,7 +12,16 @@ class CommunityListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Community.objects.filter(privacy__in=['public', 'hidden']).order_by('-last_visited')
+        user_communities = Community.objects.filter(members=user)
+        public_communities = Community.objects.filter(privacy='public')
+        private_communities = Community.objects.filter(privacy='private')
+        user_communities.update(last_visited=timezone.now())
+        
+        queryset = (user_communities | public_communities | private_communities).distinct().order_by('-last_visited')
+
+        for community in queryset:
+            community.last_visited = humanize.naturaltime(community.last_visited)
+
         return queryset
 
     def perform_create(self, serializer):
