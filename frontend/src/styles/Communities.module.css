@@ -1,0 +1,13 @@
+.community_pfp {
+    border-radius: 50%;
+    object-fit: cover;
+    height: 60px;
+}
+
+.customSubtitle {
+    margin-top: 0;
+}
+
+.customCardSpacing {
+    margin: 1rem 0;
+}
