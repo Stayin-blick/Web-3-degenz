@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from .models import Community
-from .serializers import CommunitySerializer
+from .models import Community, CommunityPost
+from .serializers import CommunitySerializer, CommunityPostSerializer
 from web_3_degenz.permissions import IsCommunityOwnerOrModerator
 
 class CommunityListCreateView(generics.ListCreateAPIView):
@@ -55,3 +55,12 @@ class CommunityDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(response_data)
 
+
+class CommunityPostListCreateView(generics.ListCreateAPIView):
+    queryset = CommunityPost.objects.all()
+    serializer_class = CommunityPostSerializer
+
+
+class CommunityPostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CommunityPost.objects.all()
+    serializer_class = CommunityPostSerializer
