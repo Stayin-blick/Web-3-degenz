@@ -3,7 +3,6 @@ from web_3_degenz.permissions import IsOwnerOrReadOnly
 from .models import Follower
 from .serializers import FollowerSerializer
 
-
 class FollowerList(generics.ListCreateAPIView):
     """
     List all followers, i.e. all instances of a user
@@ -28,3 +27,12 @@ class FollowerDetail(generics.RetrieveDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Follower.objects.all()
     serializer_class = FollowerSerializer
+
+
+class FollowedAccountsList(generics.ListAPIView):
+    queryset = Follower.objects.all()
+    serializer_class = FollowerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Follower.objects.filter(owner=self.request.user)

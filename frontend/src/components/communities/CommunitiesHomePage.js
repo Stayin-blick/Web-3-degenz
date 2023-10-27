@@ -3,6 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import PopularCommunities from './PopularCommunities';
 import CommunitiesList from './CommunitiesList';
 import styles from '../../styles/Communities.module.css'
+import SendInvitationForm from './SendInvitationForm';
 
 
 const CommunitiesHome = () => {
@@ -29,15 +30,16 @@ const CommunitiesHome = () => {
         </Col>
         <Col md={4} className="d-none d-md-block">
           <h4>Invites</h4>
-          <Row>
-            <Col md={12}>
-              <h5>Accept Invites</h5>
+          <Row >
+            <Col className={styles.invite_form} md={12}>
+              <h5>Send</h5>
               {/* Add component for accepting invites here */}
+              <SendInvitationForm />
             </Col>
           </Row>
           <Row>
-            <Col md={12}>
-              <h5>Accept Requests</h5>
+            <Col className={styles.invite_form} md={12}>
+              <h5>Accept</h5>
               {/* Add component for accepting requests to join here */}
             </Col>
           </Row>
