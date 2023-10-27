@@ -24,4 +24,16 @@ class Community(models.Model):
     def __str__(self):
         return self.name
 
+class CommunityPost(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='community_posts')
+    created_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
 
