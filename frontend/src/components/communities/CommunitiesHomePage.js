@@ -1,6 +1,6 @@
 import React from 'react';
 // import styles from '../styles/Communities.module.css'
-// import PopularCommunities from './PopularCommunities';
+import PopularCommunities from './PopularCommunities';
 import CommunitiesList from './CommunitiesList';
 
 const CommunitiesHome = () => {
@@ -10,12 +10,14 @@ const CommunitiesHome = () => {
   <br></br>
   <div className="row">
     <div className="col-md-4 d-none d-md-block">
-      {/* Popular Communities Component */}
+      {/* Popular Communities */}
       <h4>Popular Communities</h4>
+      < PopularCommunities />
       {/* < PopularCommunities /> */}
     </div>
     <div className="col-md-4">
       {/* User's Joined Communities Component */}
+      <h4>Communities</h4>
       < CommunitiesList />
     </div>
     <div className="col-md-4 d-none d-md-block">
