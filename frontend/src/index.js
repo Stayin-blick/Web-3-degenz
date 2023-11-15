@@ -6,13 +6,19 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { CurrentUserProvider } from './contexts/CurrentUserContext';
 import { ProfileDataProvider } from "./contexts/ProfileDataContext";
+import { CommunityDataProvider } from './contexts/CommunityDataContext';
 
 ReactDOM.render(
     <Router>
       <CurrentUserProvider>
         <ProfileDataProvider>
+          <CommunityDataProvider>
             <App />
-          </ProfileDataProvider>
+<<<<<<< HEAD
+=======
+          </CommunityDataProvider>
+>>>>>>> 5ac4305 (community data provider)
+        </ProfileDataProvider>
       </CurrentUserProvider>
     </Router>,
   document.getElementById('root')

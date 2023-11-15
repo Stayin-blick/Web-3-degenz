@@ -19,3 +19,16 @@
 .invite_form {
     backdrop-filter: blur(0px); background-color: rgba(255, 255, 255, 1); border-radius: 35px; box-shadow: -35px 35px 68px 0px rgba(55, 140, 255, 0.5), inset 10px -10px 16px 0px rgba(55, 140, 255, 0.6), inset 0px 11px 28px 0px rgb(255, 255, 255);
 }
+
+.custompostcreateform {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  
+  
+  
+  

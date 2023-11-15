@@ -3,7 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Community, CommunityPost
 from .serializers import CommunitySerializer, CommunityPostSerializer
-from web_3_degenz.permissions import IsCommunityOwnerOrModerator, IsCommunityMember
+from web_3_degenz.permissions import IsCommunityOwnerOrModerator, IsCommunityMember, IsPostOwner
 import humanize
 
 class CommunityListCreateView(generics.ListCreateAPIView):
@@ -66,12 +66,102 @@ class CommunityDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(response_data)
 
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+        # Ensure only community members can be moderators
+        new_moderator = instance.moderators.first()
+        if new_moderator and new_moderator not in instance.members.all():
+            instance.moderators.remove(new_moderator)
+
+        instance.save()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        # Ensure only the community owner can delete the community
+        if request.user != instance.owner:
+            return Response({'detail': 'You do not have permission to delete this community.'}, status=status.HTTP_403_FORBIDDEN)
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        # Ensure only the post owner, community owner, or moderators can delete the post
+        if not (
+            request.user == instance.owner
+            or request.user == instance.community.owner
+            or request.user in instance.community.moderators.all()
+        ):
+            return Response({'detail': 'You do not have permission to delete this post.'}, status=status.HTTP_403_FORBIDDEN)
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def remove_member(self, request, *args, **kwargs):
+        community = self.get_object()
+
+        # Ensure only the community owner or moderators can remove members
+        if not (
+            request.user == community.owner
+            or request.user in community.moderators.all()
+        ):
+            return Response({'detail': 'You do not have permission to remove members from this community.'}, status=status.HTTP_403_FORBIDDEN)
+
+        username = request.data.get('username', None)
+        if not username:
+            return Response({'detail': 'Please provide a username to remove from the community.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_object_or_404(User, username=username)
+        
+        # Ensure the user is a member of the community
+        if user not in community.members.all():
+            return Response({'detail': 'The specified user is not a member of this community.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Remove the user from the community
+        community.members.remove(user)
+        community.save()
+
+        return Response({'detail': f'The user {username} has been removed from the community.'}, status=status.HTTP_200_OK)
+
+<<<<<<< HEAD
+=======
+class CommunityInfoView(generics.RetrieveAPIView):
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer
+    permission_classes = [permissions.IsAuthenticated] 
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+
+        return Response(data)
+
+>>>>>>> 650c768 (creating user community area post edits likes)
 
 class CommunityPostListCreateView(generics.ListCreateAPIView):
     queryset = CommunityPost.objects.all()
     serializer_class = CommunityPostSerializer
-
-
+    permission_classes = [permissions.IsAuthenticated, IsCommunityMember]
+    
 class CommunityPostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CommunityPost.objects.all()
     serializer_class = CommunityPostSerializer
+
+class UserPostDeleteView(generics.DestroyAPIView):
+    queryset = CommunityPost.objects.all()
+    serializer_class = CommunityPostSerializer
+    permission_classes = [permissions.IsAuthenticated, IsPostOwner]
+
+    def perform_destroy(self, instance):
+        instance.delete()
+

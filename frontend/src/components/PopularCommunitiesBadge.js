@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import styles from '../../styles/Communities.module.css';
+import styles from '../styles/Communities.module.css';
 
-const CommunityBadge = ({ community }) => {
+const PopularCommunityBadge = ({ community }) => {
 
   return (
     <Card className={styles.customCardSpacing}>
@@ -30,9 +30,6 @@ const CommunityBadge = ({ community }) => {
                 <Card.Subtitle className={styles.customSubtitle}>
                   privacy: {community.privacy}
                 </Card.Subtitle>
-                <Card.Subtitle className={styles.customSubtitle}>
-                  last visited: {community.last_visited}
-                </Card.Subtitle>
               </div>
             </Col>
           </Row>
@@ -42,4 +39,4 @@ const CommunityBadge = ({ community }) => {
   );
 };
 
-export default CommunityBadge;
+export default PopularCommunityBadge;

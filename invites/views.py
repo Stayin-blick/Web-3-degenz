@@ -2,41 +2,29 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Invitation
 from communities.models import Community
-from .serializers import InvitationSerializer
+from .serializers import InvitationListSerializer, InvitationAcceptSerializer, InvitationSendSerializer
 from web_3_degenz.permissions import IsCommunityMember
 
 class InvitationListView(generics.ListAPIView):
-    serializer_class = InvitationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = InvitationListSerializer
+    permission_classes = [permissions.IsAuthenticated, IsCommunityMember]
 
     def get_queryset(self):
         user = self.request.user
         return Invitation.objects.filter(invitee=user, accepted=False)
 
 class InvitationCreateView(generics.CreateAPIView):
-    serializer_class = InvitationSerializer
+    serializer_class = InvitationSendSerializer
     permission_classes = [permissions.IsAuthenticated, IsCommunityMember]
 
     def get_queryset(self):
         return Community.objects.filter(members=self.request.user)
 
     def perform_create(self, serializer):
-        inviter = self.request.user
-        community = serializer.validated_data['community']
-        invitee_username = serializer.validated_data['invitee_username']
-
-        # Check if the invitee is already a member of the community
-        if community.members.filter(username=invitee_username).exists():
-            raise serializers.ValidationError("The user is already a member of the community.")
-
-        # Check if an invitation from the same inviter to the same community for the same invitee exists
-        if Invitation.objects.filter(inviter=inviter, community=community, invitee__username=invitee_username).exists():
-            raise serializers.ValidationError("You have already invited this user to the community.")
-
-        serializer.save(inviter=inviter)
+        serializer.save(inviter=self.request.user)
 
 class InvitationAcceptView(generics.UpdateAPIView):
-    serializer_class = InvitationSerializer
+    serializer_class = InvitationAcceptSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -45,7 +33,22 @@ class InvitationAcceptView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         invitation = serializer.instance
+
+        # Check if the invitation has already been accepted
+        if invitation.accepted:
+            raise serializers.ValidationError("This invitation has already been accepted.")
+
+        # Check if the user accepting the invitation is the same as the invitee
+        if invitation.invitee != self.request.user:
+            raise serializers.ValidationError("You are not authorized to accept this invitation.")
+
         community = invitation.community
-        community.members.add(invitation.invitee)
+
+        # Check if the user is already a member of the community
+        if community.members.filter(username=self.request.user.username).exists():
+            raise serializers.ValidationError("You are already a member of this community.")
+
+        # Update the community membership and set the invitation as accepted
+        community.members.add(self.request.user)
         invitation.accepted = True
         invitation.save()

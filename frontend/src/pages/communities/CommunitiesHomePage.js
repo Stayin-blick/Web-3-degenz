@@ -1,15 +1,20 @@
+// CommunitiesHome.js
+
 import React from 'react';
 import { Row, Col } from "react-bootstrap";
-import PopularCommunities from './PopularCommunities';
-import CommunitiesList from './CommunitiesList';
-import styles from '../../styles/Communities.module.css'
-import SendInvitationForm from './SendInvitationForm';
+import PopularCommunities from '../../components/PopularCommunities';
+import CommunitiesList from '../../components/CommunitiesList';
+import styles from '../../styles/Communities.module.css';
+import SendInvitationForm from '../../components/SendInvitationForm';
+import AcceptInvitationForm from '../../components/AcceptInvitationForm';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 650c768 (creating user community area post edits likes)
 
 const CommunitiesHome = () => {
   return (
     <div className="container mt-4">
-      {/* add a create community button */}
       <Row>
         <Col md={8}>
           <h1>Communities Home Page</h1>
@@ -33,14 +38,21 @@ const CommunitiesHome = () => {
           <Row >
             <Col className={styles.invite_form} md={12}>
               <h5>Send</h5>
-              {/* Add component for accepting invites here */}
+<<<<<<< HEAD
+              {/* sending invites */}
+=======
+>>>>>>> 650c768 (creating user community area post edits likes)
               <SendInvitationForm />
             </Col>
           </Row>
           <Row>
             <Col className={styles.invite_form} md={12}>
               <h5>Accept</h5>
+<<<<<<< HEAD
               {/* Add component for accepting requests to join here */}
+=======
+>>>>>>> 650c768 (creating user community area post edits likes)
+              <AcceptInvitationForm />
             </Col>
           </Row>
         </Col>

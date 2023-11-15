@@ -3,7 +3,20 @@ from .models import Invitation
 from communities.models import Community
 from django.contrib.auth.models import User
 
-class InvitationSerializer(serializers.ModelSerializer):
+
+class InvitationListSerializer(serializers.ModelSerializer):
+    community_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Invitation
+        fields = ['id', 'inviter', 'community', 'invitee', 'created_at', 'accepted', 'community_name']
+
+    def get_community_name(self, instance):
+        """Get the community name."""
+        return instance.community.name if instance.community else None
+
+
+class InvitationSendSerializer(serializers.ModelSerializer):
     invitee_username = serializers.CharField(write_only=True)
     community = serializers.PrimaryKeyRelatedField(queryset=Community.objects.none())
     accepted = serializers.BooleanField(read_only=True)
@@ -15,8 +28,7 @@ class InvitationSerializer(serializers.ModelSerializer):
 
     def get_invitee_choices(self):
         inviter = self.context['request'].user
-        followers = inviter.following.all()
-        follower_usernames = [follower.followed.username for follower in followers]
+        follower_usernames = [follower.followed.username for follower in inviter.following.all()]
         return [(username, username) for username in follower_usernames]
 
     def validate(self, data):
@@ -24,35 +36,57 @@ class InvitationSerializer(serializers.ModelSerializer):
         invitee_username = data.get('invitee_username')
         community = data.get('community')
 
-        if inviter.username == invitee_username:
-            raise serializers.ValidationError("You cannot invite yourself.")
+        # Check if the inviter is a member of the community
+        if not community.members.filter(username=inviter.username).exists():
+            raise serializers.ValidationError("You are not a member of the community.")
 
+        # Check if the invitee is not already a member of the community
         if community.members.filter(username=invitee_username).exists():
             raise serializers.ValidationError("The user is already a member of the community.")
 
-        if Invitation.objects.filter(inviter=inviter, community=community, invitee__username=invitee_username).exists():
-            raise serializers.ValidationError("You have already invited this user to the community.")
+        # Check if the invitee doesn't have a pending invite to the community
+        if Invitation.objects.filter(community=community, invitee__username=invitee_username, accepted=None).exists():
+            raise serializers.ValidationError("The user already has a pending invitation to the community.")
+
+<<<<<<< HEAD
+        # Check if the invitee is a valid user
+        try:
+=======
+        try:
+            # Get the user object for the invitee
+>>>>>>> b7f8cd4 (community invitation)
+            invitee = User.objects.get(username=invitee_username)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid username for invitee.")
+
+        # Check if the inviter has not already sent an invite to the invitee
+        if Invitation.objects.filter(inviter=inviter, community=community, invitee=invitee, accepted=None).exists():
+            raise serializers.ValidationError("You have already sent an invitation to this user for the community.")
 
         return data
 
-    def save(self, **kwargs):
+    def create(self, validated_data):
         inviter = self.context['request'].user
-        community = self.validated_data['community']
-        invitee_username = self.validated_data['invitee_username']
+        community = validated_data['community']
+        invitee_username = validated_data['invitee_username']
 
-        # Check if the invitee is already a member of the community
-        if community.members.filter(username=invitee_username).exists():
-            raise serializers.ValidationError("The user is already a member of the community.")
+<<<<<<< HEAD
+=======
+        try:
+            # Get the user object for the invitee
+            invitee = User.objects.get(username=invitee_username)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid username for invitee.")
 
-        # Check if an invitation from the same inviter to the same community for the same invitee exists
-        if Invitation.objects.filter(inviter=inviter, community=community, invitee__username=invitee_username).exists():
-            raise serializers.ValidationError("You have already invited this user to the community.")
-
-        # If everything is valid, create the invitation
+>>>>>>> b7f8cd4 (community invitation)
+        # Create the invitation
         invitation = Invitation.objects.create(
             inviter=inviter,
             community=community,
-            invitee=User.objects.get(username=invitee_username)
+<<<<<<< HEAD
+=======
+            invitee=invitee,  # Set the invitee field
+>>>>>>> b7f8cd4 (community invitation)
         )
 
         return invitation
@@ -60,3 +94,37 @@ class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
         fields = ['community', 'invitee_username', 'accepted']
+<<<<<<< HEAD
+
+=======
+>>>>>>> b7f8cd4 (community invitation)
+class InvitationAcceptSerializer(serializers.ModelSerializer):
+    accepted = serializers.BooleanField()
+
+    def validate(self, data):
+        # Ensure that the invitation being accepted belongs to the current user
+        invitation = self.instance
+        user = self.context['request'].user
+
+        if invitation.invitee != user:
+            raise serializers.ValidationError("You do not have permission to accept this invitation.")
+
+        return data
+
+    def update(self, instance, validated_data):
+        accepted = validated_data['accepted']
+
+        if accepted:
+            # Accept the invitation and make the user a member of the community
+            instance.accepted = True
+            instance.save()
+            instance.community.members.add(instance.invitee)
+        else:
+            # Decline the invitation and delete it
+            instance.delete()
+
+        return instance
+
+    class Meta:
+        model = Invitation
+        fields = ['accepted']
