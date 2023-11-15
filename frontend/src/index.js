@@ -14,10 +14,7 @@ ReactDOM.render(
         <ProfileDataProvider>
           <CommunityDataProvider>
             <App />
-<<<<<<< HEAD
-=======
           </CommunityDataProvider>
->>>>>>> 5ac4305 (community data provider)
         </ProfileDataProvider>
       </CurrentUserProvider>
     </Router>,

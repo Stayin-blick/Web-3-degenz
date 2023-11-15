@@ -5,22 +5,12 @@ import axios from "axios";
 
 const SendInvitationForm = ({ preselectedCommunity }) => {
   const [formData, setFormData] = useState({
-<<<<<<< HEAD
-    community: "",
-    invitee_username: "",
-    accepted: false,
-    community_name: "", // Will be dynamically filled
-    created_at: "", // Will be dynamically filled
-    id: null, // Will be dynamically filled
-    // Add other fields as needed
-=======
     community: preselectedCommunity ? preselectedCommunity.id : "",
     invitee_username: "",
     accepted: false,
     community_name: preselectedCommunity ? preselectedCommunity.name : "",
     created_at: "",
     id: preselectedCommunity ? preselectedCommunity.id : null,
->>>>>>> b7f8cd4 (community invitation)
   });
 
   const [error, setError] = useState(null);
@@ -51,23 +41,6 @@ const SendInvitationForm = ({ preselectedCommunity }) => {
     fetchUserFollowers();
   }, []);
 
-<<<<<<< HEAD
-  const handleCommunityChange = async (selectedCommunityId) => {
-    try {
-      // Fetch additional details for the selected community
-      const response = await axios.get(`/communities/${selectedCommunityId}/edit_community`);
-      const selectedCommunityDetails = response.data;
-
-      // Update the form data with the fetched details
-      setFormData((prevData) => ({
-        ...prevData,
-        community_name: selectedCommunityDetails.name,
-        id: selectedCommunityDetails.id,
-        created_at: new Date().toISOString(), // Use the current time
-      }));
-    } catch (error) {
-      console.error("Failed to fetch community details.", error);
-=======
   useEffect(() => {
     console.log('Preselected Community:', preselectedCommunity);
     if (preselectedCommunity) {
@@ -120,43 +93,6 @@ const SendInvitationForm = ({ preselectedCommunity }) => {
     } catch (error) {
       console.error("Error Sending Invitation:", error);
       setError("Failed to send invitation. Please try again later.");
->>>>>>> b7f8cd4 (community invitation)
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    try {
-      // Log form data before sending invitation
-      console.log("Form Data Before Sending Invitation:", formData);
-  
-      // Send the invitation
-      await axios.post("/invitations/create/", {
-        community: formData.community,
-        invitee_username: formData.invitee_username,
-        // Include other form data as needed
-      });
-  
-      // Handle success messages and reset the form
-      console.log("Invitation Sent Successfully!");
-      setSuccessMessage("Invitation sent successfully!");
-      setFormData({
-        community: "",
-        invitee_username: "",
-        accepted: false,
-        community_name: "",
-        created_at: "",
-        id: null,
-        // Reset other fields as needed
-      });
-      setError(null);
-    } catch (error) {
-      // Log more details about the error
-      console.error("Error Sending Invitation:", error);
-  
-      // Handle validation error or other errors
-      setError("Failed to send invitation. Please try again later."); // You can customize this message
     }
   };
 
