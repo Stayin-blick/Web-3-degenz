@@ -132,8 +132,6 @@ class CommunityDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         return Response({'detail': f'The user {username} has been removed from the community.'}, status=status.HTTP_200_OK)
 
-<<<<<<< HEAD
-=======
 class CommunityInfoView(generics.RetrieveAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
@@ -146,7 +144,6 @@ class CommunityInfoView(generics.RetrieveAPIView):
 
         return Response(data)
 
->>>>>>> 650c768 (creating user community area post edits likes)
 
 class CommunityPostListCreateView(generics.ListCreateAPIView):
     queryset = CommunityPost.objects.all()

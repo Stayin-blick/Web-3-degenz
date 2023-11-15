@@ -7,10 +7,6 @@ import CommunitiesList from '../../components/CommunitiesList';
 import styles from '../../styles/Communities.module.css';
 import SendInvitationForm from '../../components/SendInvitationForm';
 import AcceptInvitationForm from '../../components/AcceptInvitationForm';
-<<<<<<< HEAD
-
-=======
->>>>>>> 650c768 (creating user community area post edits likes)
 
 const CommunitiesHome = () => {
   return (
@@ -38,20 +34,12 @@ const CommunitiesHome = () => {
           <Row >
             <Col className={styles.invite_form} md={12}>
               <h5>Send</h5>
-<<<<<<< HEAD
-              {/* sending invites */}
-=======
->>>>>>> 650c768 (creating user community area post edits likes)
               <SendInvitationForm />
             </Col>
           </Row>
           <Row>
             <Col className={styles.invite_form} md={12}>
               <h5>Accept</h5>
-<<<<<<< HEAD
-              {/* Add component for accepting requests to join here */}
-=======
->>>>>>> 650c768 (creating user community area post edits likes)
               <AcceptInvitationForm />
             </Col>
           </Row>

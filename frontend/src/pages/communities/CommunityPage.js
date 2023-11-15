@@ -55,22 +55,12 @@ const CommunityPage = () => {
   return (
     <Container fluid>
       <Row>
-<<<<<<< HEAD
-        {/* Left Column - Community Info (Hidden on sm screens) */}
-        <Col md={3} className="d-none d-md-block">
-          {/* Display community information, founder, moderators, etc. */}
-          <h1>community info</h1>
-          {/* <p>Name: {community.name}</p>
-          <p>Number of Members: {community.members.length}</p>
-          <p>Privacy: {community.privacy}</p> */}
-=======
         {/* Left Column - Community Info */}
         <Col xs={3}>
           <div>
           <h1>Community Info:</h1>
             <CommunityInfoBadge />
           </div>
->>>>>>> 650c768 (creating user community area post edits likes)
         </Col>
         {/* Middle Column */}
         <Col xs={6}>
