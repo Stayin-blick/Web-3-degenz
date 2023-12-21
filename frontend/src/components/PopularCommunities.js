@@ -1,28 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import PopularCommunityBadge from './PopularCommunitiesBadge';
 
-const PopularCommunitiesList = () => {
-  const [communities, setCommunities] = useState([]);
-
-  useEffect(() => {
-    // Fetch the list of communities
-    axios.get('/communities/').then((response) => {
-      // Sort the communities by the number of members in descending order
-      const sortedCommunities = response.data.results.sort((a, b) => b.members.length - a.members.length);
-      setCommunities(sortedCommunities);
-    });
-  }, []);
-
+const PopularCommunities = ({ communities }) => {
   return (
     <div>
-      <div>
-        {communities.map((community) => (
-          <PopularCommunityBadge key={community.id} community={community} />
-        ))}
-      </div>
+      {communities.map((community) => (
+        <PopularCommunityBadge key={community.id} community={community} />
+      ))}
     </div>
   );
 };
 
-export default PopularCommunitiesList;
+export default PopularCommunities;

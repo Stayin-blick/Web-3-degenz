@@ -1,14 +1,22 @@
-// CommunitiesHome.js
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col } from "react-bootstrap";
 import PopularCommunities from '../../components/PopularCommunities';
 import CommunitiesList from '../../components/CommunitiesList';
 import styles from '../../styles/Communities.module.css';
 import SendInvitationForm from '../../components/SendInvitationForm';
 import AcceptInvitationForm from '../../components/AcceptInvitationForm';
+import axios from 'axios';
 
 const CommunitiesHome = () => {
+  const [communities, setCommunities] = useState([]);
+
+  useEffect(() => {
+    // Fetch the list of communities
+    axios.get('/communities/').then((response) => {
+      setCommunities(response.data.results);
+    });
+  }, []);
+
   return (
     <div className="container mt-4">
       <Row>
@@ -23,22 +31,22 @@ const CommunitiesHome = () => {
       <Row>
         <Col md={4} className="d-none d-md-block">
           <h4>Popular Communities</h4>
-          <PopularCommunities />
+          <PopularCommunities communities={communities} />
         </Col>
         <Col md={4}>
           <h4>Communities</h4>
-          <CommunitiesList />
+          <CommunitiesList communities={communities} />
         </Col>
         <Col md={4} className="d-none d-md-block">
           <h4>Invites</h4>
-          <Row >
-            <Col className={styles.invite_form} md={12}>
+          <Row className="my-3">
+            <Col className={` ${styles.invite_form} p-3`} md={12}>
               <h5>Send</h5>
-              <SendInvitationForm />
+              <SendInvitationForm communities={communities} />
             </Col>
           </Row>
-          <Row>
-            <Col className={styles.invite_form} md={12}>
+          <Row className="my-3">
+            <Col className={` ${styles.invite_form} p-3`} md={12}>
               <h5>Accept</h5>
               <AcceptInvitationForm />
             </Col>

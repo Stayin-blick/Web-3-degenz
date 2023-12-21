@@ -1,24 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import CommunityBadge from './CommunityBadge';
 
-const CommunitiesList = () => {
-  const [communities, setCommunities] = useState([]);
-
-  useEffect(() => {
-    // Fetch the list of communities
-    axios.get('/communities/').then((response) => {
-      setCommunities(response.data.results);
-    });
-  }, []);
-
+const CommunitiesList = ({ communities }) => {
   return (
     <div>
-      <div>
-        {communities.map((community) => (
-          <CommunityBadge key={community.id} community={community} />
-        ))}
-      </div>
+      {communities.map((community) => (
+        <CommunityBadge key={community.id} community={community} />
+      ))}
     </div>
   );
 };
