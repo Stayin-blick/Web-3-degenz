@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
-import CommunityInfoBadge from '../../components/CommunityInfoBadge'
+import CommunityInfoBadge from '../../components/CommunityInfoBadge';
 import SendInvitationForm from '../../components/SendInvitationForm';
 import CommunityPostCreate from '../../components/CommunityPostCreate';
 import CommunityPostsPage from './CommunitiesPostsPage';
@@ -63,7 +63,7 @@ const CommunityPage = () => {
         {/* Right Column - Send Invitation Form */}
         <Col xs={3}>
           <h1>Invite</h1>
-          {/* <SendInvitationForm /> */}
+          <SendInvitationForm communities={preselectedCommunity ? [preselectedCommunity] : []} />
         </Col>
       </Row>
     </Container>

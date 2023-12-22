@@ -1,33 +1,19 @@
-import React, { useState, useEffect } from "react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import axios from 'axios';
 
-const SendInvitationForm = ({ preselectedCommunity }) => {
+const SendInvitationForm = ({ communities }) => {
   const [formData, setFormData] = useState({
-    community: preselectedCommunity ? preselectedCommunity.id : "",
+    community: communities.length > 0 ? communities[0].id : "",
     invitee_username: "",
-    accepted: false,
-    community_name: preselectedCommunity ? preselectedCommunity.name : "",
-    created_at: "",
-    id: preselectedCommunity ? preselectedCommunity.id : null,
   });
 
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [userCommunities, setUserCommunities] = useState([]);
   const [userFollowers, setUserFollowers] = useState([]);
 
   useEffect(() => {
-    const fetchUserCommunities = async () => {
-      try {
-        const response = await axios.get("/communities/");
-        setUserCommunities(response.data.results);
-      } catch (error) {
-        console.error("Failed to fetch user communities.", error);
-      }
-    };
-
     const fetchUserFollowers = async () => {
       try {
         const response = await axios.get("/followed-accounts/");
@@ -37,36 +23,8 @@ const SendInvitationForm = ({ preselectedCommunity }) => {
       }
     };
 
-    fetchUserCommunities();
     fetchUserFollowers();
   }, []);
-
-  useEffect(() => {
-    console.log('Preselected Community:', preselectedCommunity);
-    if (preselectedCommunity) {
-      setFormData((prevData) => ({
-        ...prevData,
-        community: preselectedCommunity.id,
-        community_name: preselectedCommunity.name,
-        id: preselectedCommunity.id,
-      }));
-    }
-  }, [preselectedCommunity]);
-
-  const handleCommunityChange = async (selectedCommunityId) => {
-    try {
-      const response = await axios.get(`/communities/${selectedCommunityId}/edit_community`);
-      const selectedCommunityDetails = response.data;
-      setFormData((prevData) => ({
-        ...prevData,
-        community_name: selectedCommunityDetails.name,
-        id: selectedCommunityDetails.id,
-        created_at: new Date().toISOString(),
-      }));
-    } catch (error) {
-      console.error("Failed to fetch community details.", error);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,7 +40,7 @@ const SendInvitationForm = ({ preselectedCommunity }) => {
       console.log("Invitation Sent Successfully!");
       setSuccessMessage("Invitation sent successfully!");
       setFormData({
-        community: "",
+        community: communities.length > 0 ? communities[0].id : "",
         invitee_username: "",
         accepted: false,
         community_name: "",
@@ -92,11 +50,16 @@ const SendInvitationForm = ({ preselectedCommunity }) => {
       setError(null);
     } catch (error) {
       console.error("Error Sending Invitation:", error);
-      setError("Failed to send invitation. Please try again later.");
+      if (error.response && error.response.data) {
+        // Display specific error message from the server response
+        setError(error.response.data.detail || "Failed to send invitation. Please try again later.");
+      } else {
+        setError("Failed to send invitation. Please try again later.");
+      }
     }
   };
 
-  console.log("User Communities:", userCommunities);
+  console.log("User Communities:", communities);
   console.log("User Followers:", userFollowers);
 
   return (
@@ -112,11 +75,10 @@ const SendInvitationForm = ({ preselectedCommunity }) => {
           value={formData.community}
           onChange={(e) => {
             setFormData({ ...formData, community: e.target.value });
-            handleCommunityChange(e.target.value);
           }}
         >
           <option value="">Select a Community</option>
-          {userCommunities.map((community) => (
+          {communities.map((community) => (
             <option key={community.id} value={community.id}>
               {community.name}
             </option>

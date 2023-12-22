@@ -48,6 +48,10 @@ class InvitationSendSerializer(serializers.ModelSerializer):
         if Invitation.objects.filter(community=community, invitee__username=invitee_username, accepted=None).exists():
             raise serializers.ValidationError("The user already has a pending invitation to the community.")
 
+        # Check if the invitee has already been invited to the community
+        if Invitation.objects.filter(community=community, invitee__username=invitee_username, accepted=False).exists():
+            raise serializers.ValidationError("The user has already been invited to the community.")
+
         try:
             # Get the user object for the invitee
             invitee = User.objects.get(username=invitee_username)
@@ -83,6 +87,8 @@ class InvitationSendSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
         fields = ['community', 'invitee_username', 'accepted']
+
+
 class InvitationAcceptSerializer(serializers.ModelSerializer):
     accepted = serializers.BooleanField()
 
