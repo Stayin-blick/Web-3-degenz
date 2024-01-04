@@ -16,12 +16,12 @@ const EditCommunityForm = ({ communityId }) => {
 
   useEffect(() => {
     // Fetch community data and update state
-    axios.get(`/api/communities/${communityId}/info/`)
+    axios.get(`/communities/${communityId}/info/`)
       .then(response => {
         setCommunityData(response.data);
 
-        // Fetch all users (assuming you have an endpoint for that)
-        return axios.get('/api/users/');
+        
+        return axios.get('/users/');
       })
       .then(response => {
         setAllUsers(response.data.results);
@@ -42,7 +42,7 @@ const EditCommunityForm = ({ communityId }) => {
     e.preventDefault();
 
     // Send updated data to the backend
-    axios.put(`/api/communities/${communityId}/edit/`, communityData)
+    axios.put(`/communities/${communityId}/edit/`, communityData)
       .then(response => {
         console.log('Community updated successfully', response.data);
         // Handle success, e.g., redirect or show a success message
