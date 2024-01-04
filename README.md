@@ -209,6 +209,11 @@ Expected Outcome: Successful creation and update of user profiles.
 Screenshots:
 ![Screenshot 2023-11-15 at 03 39 33](https://github.com/Stayin-blick/Web-3-degenz/assets/109948932/254ef5e1-ed7c-46b4-9334-83ccf940f606)
 
+Bugs:
+
+issues due to too many connections to database, this was resolved by api calls moved away from conponents and props passed to the component
+
+issue between local and deployed site, deployed site is behind 
 
 Conclusion
 By manually testing these scenarios in the Django admin panel, you can ensure that the backend functionalities are working as expected. Take screenshots at each step to document the testing process and results for future reference.
