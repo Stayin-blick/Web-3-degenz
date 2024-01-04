@@ -25,3 +25,9 @@ class CommunityPostSerializer(serializers.ModelSerializer):
             'title', 'content', 'image', 'community_id',
             'likes_count', 'comments_count'
         ]
+
+
+class CommunityEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Community
+        fields = ['owner', 'moderators', 'name', 'image', 'members', 'content', 'privacy']

@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Form, Container } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useLocation } from "react-router";
 import { axiosReq } from "../../api/axiosDefaults";
 import { fetchMoreData } from "../../utils/utils";
 import Asset from "../../components/Asset";
 import NoResults from "../../assests/no-results.png";
 import CommunityPost from "./CommunitiesPost";
 import appStyles from "../../App.module.css";
-import styles from "../../styles/Communities.module.css";
-import { useCurrentUser } from "../../contexts/CurrentUserContext";
+// import styles from "../../styles/Communities.module.css";
 
 function CommunityPostsPage( { message, filter = "", pk } ) {
     const [posts, setPosts] = useState({ results: [] });
     const [hasLoaded, setHasLoaded] = useState(false);
-  
-  const { pathname } = useLocation();
-  const [query, setQuery] = useState("");
-  const currentUser = useCurrentUser();
 
   useEffect(() => {
     const fetchCommunityPosts = async () => {

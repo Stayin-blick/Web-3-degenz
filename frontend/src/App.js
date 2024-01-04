@@ -14,6 +14,8 @@ import ProfilePage from "./pages/profiles/ProfilePage";
 import UsernameForm from "./pages/profiles/UsernameForm";
 import UserPasswordForm from "./pages/profiles/UserPasswordForm";
 import ProfileEditForm from "./pages/profiles/ProfileEditForm";
+import CreateCommunityForm from "./pages/communities/CreateCommunityForm";
+import EditCommunityForm from "./pages/communities/EditCommunityForm";
 import CommunitiesHomePage from "./pages/communities/CommunitiesHomePage";
 import CommunityPage from "./pages/communities/CommunityPage"
 import CommunityPost from "./pages/communities/CommunitiesPost";
@@ -75,9 +77,11 @@ function App() {
             path="/profiles/:id/edit"
             render={() => <ProfileEditForm />}
           />
-          <Route exact path="/communities" render={() => <CommunitiesHomePage />} />
+          <Route path="/communities/create" render={() => <CreateCommunityForm />} />
+          <Route path="/communities/:pk/edit/" render={() => <EditCommunityForm />} />
           <Route path="/communities/:pk/homepage" render={() => <CommunityPage />} />
           <Route path="/communities/posts/:pk" render={() => <CommunityPost />} />
+          <Route path="/communities" render={() => <CommunitiesHomePage />} />
           <Route render={() => <p>Page not found</p>} />
         </Switch>
       </Container>

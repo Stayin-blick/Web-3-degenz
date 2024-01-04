@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 import styles from '../styles/Communities.module.css';
 
@@ -11,7 +12,14 @@ const CommunityInfoBadge = ({ community }) => {
     <div>
       <Card>
         <Card.Body>
-          <Card.Title>{community.name}</Card.Title>
+          <div class="d-flex" className={styles.titleContainer}>
+            <Card.Title>
+              {community.name}
+            </Card.Title>
+            <Link to={`/communities/${community.id}/edit/`}>
+              <i className="fa-regular fa-pen-to-square"></i>
+            </Link>
+          </div>
           <img className={styles.community_pfp} src={community.image} alt="community pic" />
           <Card.Subtitle className={styles.customSubtitle}>
             Owner: {community.owner_username}
@@ -22,7 +30,9 @@ const CommunityInfoBadge = ({ community }) => {
           <Card.Subtitle className={styles.customSubtitle}>
             Members Count: {community.members.length}
           </Card.Subtitle>
-          <Card.Subtitle className={styles.customSubtitle}>privacy: {community.privacy}</Card.Subtitle>
+          <Card.Subtitle className={styles.customSubtitle}>
+            privacy: {community.privacy}
+          </Card.Subtitle>
         </Card.Body>
       </Card>
     </div>

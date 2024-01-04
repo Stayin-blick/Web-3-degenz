@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Row, Col } from "react-bootstrap";
 import PopularCommunities from '../../components/PopularCommunities';
 import CommunitiesList from '../../components/CommunitiesList';
@@ -25,6 +26,9 @@ const CommunitiesHome = () => {
         </Col>
         <Col md={4} className="text-right">
           {/* button/icon to link to community create page */}
+          <Link to="/communities/create">
+            <p>Create Community</p>
+          </Link>
         </Col>
       </Row>
       <br></br>

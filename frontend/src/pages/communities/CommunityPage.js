@@ -9,10 +9,6 @@ import CommunityPostsPage from './CommunitiesPostsPage';
 
 const CommunityPage = () => {
   const [preselectedCommunity, setPreselectedCommunity] = useState(null);
-  const [postFormData, setPostFormData] = useState({
-    title: '',
-    content: '',
-  });
   const { pk } = useParams();
 
   useEffect(() => {

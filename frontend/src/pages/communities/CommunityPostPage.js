@@ -1,6 +1,4 @@
-// page with coomunity post comment and likes 
 
-// Import other components as needed
 import React, { useEffect, useState } from "react";
 
 import Col from "react-bootstrap/Col";
@@ -10,7 +8,6 @@ import Container from "react-bootstrap/Container";
 import appStyles from "../../App.module.css";
 import { useParams } from "react-router";
 import { axiosReq } from "../../api/axiosDefaults";
-import Post from "./Post";
 import Comment from "../comments/Comment";
 import CommunityPost from "../../pages/communities/CommunitiesPage";
 import CommentCreateForm from "../comments/CommentCreateForm";
@@ -40,7 +37,7 @@ function CommunityPostPage() {
           setComments(comments);
         } catch (error) {
           console.error('Error fetching data:', error);
-          // Handle the error (e.g., display an error message to the user)
+          
         } finally {
           setLoading(false);
         }

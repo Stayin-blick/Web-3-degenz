@@ -3,6 +3,7 @@ from communities import views
 
 urlpatterns = [
     path('communities/', views.CommunityListCreateView.as_view(), name='community-list'),
+    path('communities/<int:pk>/edit/', views.CommunityEditView.as_view(), name='edit_community'),
     path('communities/<int:pk>/edit_community/', views.CommunityDetailView.as_view(), name='edit_community'),
     path('communities/<int:pk>/info/', views.CommunityInfoView.as_view(), name='community-info'),
     path('communities/<int:pk>/homepage/', views.CommunityPostListCreateView.as_view(), name='community-homepage'),
